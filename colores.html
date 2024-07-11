@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frase que sigue al cursor y traza ruta</title>
+    <title>Frase que sigue al cursor</title>
     <style>
         body {
             height: 100vh;
@@ -19,19 +19,11 @@
             position: absolute;
             font-size: 24px;
             font-weight: bold;
-            transition: color 0.1s;
             display: flex;
         }
-        .punto {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.7;
-        }
         .letra {
-            transition: color 0.1s;
+            position: absolute;
+            transition: left 0.05s, top 0.05s;
         }
         .input-container {
             position: absolute;
@@ -49,44 +41,43 @@
         const fraseContainer = document.getElementById('frase-container');
         const textoInput = document.getElementById('texto');
         const colors = ['#FF5733', '#33FF57', '#3357FF', '#F333FF', '#FF33A1'];
+        let letras = [];
 
         textoInput.addEventListener('input', updateFrase);
 
         document.addEventListener('mousemove', (event) => {
-            // Mueve la frase con el cursor
-            fraseContainer.style.left = `${event.clientX}px`;
-            fraseContainer.style.top = `${event.clientY}px`;
+            // Mueve cada letra en forma de gusano
+            for (let i = letras.length - 1; i > 0; i--) {
+                letras[i].style.left = letras[i - 1].style.left;
+                letras[i].style.top = letras[i - 1].style.top;
+                letras[i].style.color = letras[i - 1].style.color;
+            }
 
-            // Cambia el color de cada letra
-            const letras = document.querySelectorAll('.letra');
-            letras.forEach(letra => {
-                letra.style.color = colors[Math.floor(Math.random() * colors.length)];
-            });
-
-            // Crea un nuevo punto para trazar la ruta del cursor
-            const punto = document.createElement('div');
-            punto.className = 'punto';
-            punto.style.left = `${event.clientX}px`;
-            punto.style.top = `${event.clientY}px`;
-            punto.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-
-            document.body.appendChild(punto);
-
-            // Elimina el punto después de 1 segundo
-            setTimeout(() => {
-                punto.remove();
-            }, 1000);
+            // La primera letra sigue al cursor
+            if (letras.length > 0) {
+                letras[0].style.left = `${event.clientX}px`;
+                letras[0].style.top = `${event.clientY}px`;
+                letras[0].style.color = colors[Math.floor(Math.random() * colors.length)];
+            }
         });
 
         function updateFrase() {
             fraseContainer.innerHTML = '';
+            letras = [];
             const text = textoInput.value || 'Sigo al cursor!';
             for (let char of text) {
                 const span = document.createElement('span');
                 span.className = 'letra';
                 span.textContent = char;
                 fraseContainer.appendChild(span);
+                letras.push(span);
             }
+
+            // Inicializa las posiciones de las letras fuera de la pantalla
+            letras.forEach(letra => {
+                letra.style.left = '-100px';
+                letra.style.top = '-100px';
+            });
         }
 
         // Inicializar con la frase predeterminada
