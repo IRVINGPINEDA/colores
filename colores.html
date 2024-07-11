@@ -23,7 +23,7 @@
         }
         .letra {
             position: absolute;
-            transition: left 0.05s, top 0.05s;
+            transition: left 0.17s, top 0.17s;
         }
         .input-container {
             position: absolute;
@@ -55,8 +55,8 @@
 
             // La primera letra sigue al cursor
             if (letras.length > 0) {
-                letras[0].style.left = `${event.clientX}px`;
-                letras[0].style.top = `${event.clientY}px`;
+                letras[0].style.left = `${event.clientX-750}px`;
+                letras[0].style.top = `${event.clientY-350}px`;
                 letras[0].style.color = colors[Math.floor(Math.random() * colors.length)];
             }
         });
